@@ -1,0 +1,21 @@
+// algorithm for addition of two numbers
+
+step 1: input two numbers a and b,
+step 2: do addition of that two numbers,
+step 3 : store that addition in new variable c,
+step 4 : return or print new variable c.
+
+
+// Area of circle
+
+step 1: get input of radius od circle and store in r,
+step 2: and assign value of pi=3.14 (For A = pi x r x r),
+step 3 : so do multiplication of r x r x pi amd store result in A,
+step 4 : return or print new variable A.
+
+// sum of all the even numbers
+
+step 1: get in n and initiate variable sum(n is number that we want to do loop),
+step 2: run for loop with terminal condition less then equal to n,
+step 3: and check if i/2=0 then do addition of that i with sum,
+step 4: return or print value of sum.
