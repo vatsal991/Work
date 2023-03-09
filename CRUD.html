@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+</head>
+
+<style>
+  body {
+    padding: 20px;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
+
+  button {
+    margin-right: 10px;
+  }
+
+  form {
+    margin-bottom: 30px;
+  }
+
+  form label {
+    font-size: large;
+  }
+
+  form input {
+    border: thin solid grey;
+    padding: 5px 20px;
+  }
+</style>
+
+<body>
+
+
+  <form onsubmit="return false" action="">
+
+    <div>
+      <label for="">Name</label><br>
+      <input id="Name" value="" type="text" placeholder="Name" required>
+    </div>
+
+    <div>
+      <label for="">Email</label><br>
+      <input id="Email" value="" type="text" placeholder="Email" required>
+    </div>
+
+
+
+    <div>
+      <label for="">Gender</label><br>
+      <input id="Male" value="Male" type="radio" name="gender"><label for="">Male</label><br>
+      <input id="Female" value="Female" type="radio" name="gender"><label for="">Female</label><br>
+    </div>
+
+    <button id="Submit" onclick="SendDetails()">Submit</button>
+    <button style="display: none;" id="Update" onclick="UpdateDetails()">Update</button>
+
+  </form>
+
+  <table style="min-width: 60vw;text-align: left;border-collapse: collapse" border="" id="Table">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Gender</th>
+      <th>Name</th>
+    </tr>
+  </table>
+
+
+
+  <script>
+
+    var UpdateId = ""
+
+    function fetchData() {
+      const Data = fetch("https://gorest.co.in/public/v2/users?access-token=6f6371fbf292cbb5992c1038399540fff28fc6d54295b3403271db6bc544f72f", { method: "GET" }).then((res) => {
+        return res.json()
+      }).then(data => {
+
+        let TableInfo = "<tr><th>Name</th><th>Email</th><th>Gender</th><th>Action</th></tr>"
+        data.map((user) => {
+          // console.log(user)
+          TableInfo += `<tr><td>${user.name}</td><td>${user.email}</td><td>${user.gender}</td><td><button onclick="Update(${user.id})">Update</button><button onclick="Delete(${user.id})">Delete</button></td></tr>`
+        })
+        document.getElementById("Table").innerHTML = TableInfo
+      })
+    }
+
+    function Update(id) {
+      UpdateId = id
+      document.getElementById("Update").style.display = "block"
+      document.getElementById("Submit").style.display = "none"
+
+      const Data = fetch(`https://gorest.co.in/public/v2/users/${id}?access-token=6f6371fbf292cbb5992c1038399540fff28fc6d54295b3403271db6bc544f72f`, { method: "GET" }).then((res) => {
+        return res.json()
+      }).then((result) => {
+        document.getElementById("Name").value = result.name
+        document.getElementById("Email").value = result.email
+
+        if (result.gender == "female") {
+          document.getElementById("Female").checked = true
+        }
+        else {
+          document.getElementById("Male").checked = true
+        }
+      })
+    }
+
+    function Delete(id) {
+      console.log(id)
+      const Data = fetch(`https://gorest.co.in/public/v2/users/${id}?access-token=6f6371fbf292cbb5992c1038399540fff28fc6d54295b3403271db6bc544f72f`, { method: "DELETE" }).then((res) => {
+        location.reload()
+      }).catch((e) => {
+        alert("Error....")
+      })
+    }
+
+
+    function SendDetails() {
+      const name = document.getElementById("Name").value
+      const email = document.getElementById("Email").value
+      const gender = document.querySelector("input[name='gender']:checked").value
+      const status = "Active"
+
+      var formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("email", email);
+      formdata.append("gender", gender);
+      formdata.append("status", status);
+
+      var requestOptions = {
+        method: 'POST',
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch("https://gorest.co.in/public/v2/users?access-token=6f6371fbf292cbb5992c1038399540fff28fc6d54295b3403271db6bc544f72f", requestOptions)
+        .then(response => response.text())
+        .then(() => { alert("Uploaded...") })
+        .catch(error => console.log('error', error));
+    }
+
+
+    function UpdateDetails() {
+
+      const name = document.getElementById("Name").value
+      const email = document.getElementById("Email").value
+      const gender = document.querySelector("input[name='gender']:checked").value
+      const status = "Active"
+
+      var formdata = new FormData();
+      formdata.append("name",name);
+      formdata.append("email", email);
+      formdata.append("gender", gender);
+      formdata.append("status", status);
+
+      var requestOptions = {
+        method: 'PUT',
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch(`https://gorest.co.in/public/v2/users/${UpdateId}?access-token=6f6371fbf292cbb5992c1038399540fff28fc6d54295b3403271db6bc544f72f`, requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+
+    fetchData()
+  </script>
+</body>
+
+</html>
